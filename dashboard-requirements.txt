@@ -1,0 +1,8 @@
+# Dependensi Khusus Dashboard & Peramalan ARIMA
+# Versi diselaraskan dengan environment aktif agar stabil dan tidak merusak Apache Airflow 2.10.5
+pandas==2.1.4
+streamlit==1.60.0
+plotly==7.1.0
+statsmodels==0.15.0
+numpy==1.26.4
+scipy==1.17.1
