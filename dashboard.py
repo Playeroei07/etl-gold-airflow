@@ -110,30 +110,6 @@ def main():
     # Sidebar: Kontrol & Informasi Sistem
     # -----------------------------------------------------------------------
     with st.sidebar:
-    st.title("⚙️ Kontrol & Filter")
-    st.caption("Proyek: Gold Price Monitoring (Airflow ETL)")
-    st.info(
-        f"📌 **Status Data**: Disimpan dari ETL\n\n"
-        f"📅 **Observasi Terakhir**:\n{latest_date_str}\n\n"
-        f"📦 **Total Baris Data**: {total_records} hari",
-        icon="ℹ️",
-    )
-    st.markdown("---")
-    # Collapse date range and horizon settings to save space
-    with st.expander("Filter Rentang Tanggal & Pengaturan Peramalan", expanded=False):
-        st.subheader("Filter Rentang Tanggal")
-        min_date = df_raw["date"].min().date()
-        max_date = df_raw["date"].max().date()
-        date_range = st.date_input(
-            "Pilih Rentang Analisis Historis:",
-            value=(min_date, max_date),
-            min_value=min_date,
-            max_value=max_date,
-        )
-        st.markdown("---")
-        st.subheader("Pengaturan Peramalan")
-        horizon = 3
-        st.info("Peramalan akan dilakukan untuk 3 hari kerja ke depan.")
         st.title("⚙️ Kontrol & Filter")
         st.caption("Proyek: Gold Price Monitoring (Airflow ETL)")
 
@@ -143,24 +119,20 @@ def main():
             f"📦 **Total Baris Data**: {total_records} hari",
             icon="ℹ️",
         )
-
         st.markdown("---")
-        st.subheader("Filter Rentang Tanggal")
-        min_date = df_raw["date"].min().date()
-        max_date = df_raw["date"].max().date()
-
-        date_range = st.date_input(
-            "Pilih Rentang Analisis Historis:",
-            value=(min_date, max_date),
-            min_value=min_date,
-            max_value=max_date,
-        )
-
-        st.markdown("---")
-        st.subheader("Pengaturan Peramalan")
-        # Horizon is fixed to 3 business days as per requirement
-        horizon = 3
-        st.info("Peramalan akan dilakukan untuk 3 hari kerja ke depan.")
+        with st.expander("Filter Rentang Tanggal & Pengaturan Peramalan", expanded=False):
+            min_date = df_raw["date"].min().date()
+            max_date = df_raw["date"].max().date()
+            date_range = st.date_input(
+                "Pilih Rentang Analisis Historis:",
+                value=(min_date, max_date),
+                min_value=min_date,
+                max_value=max_date,
+                key="sidebar_date_range",
+            )
+            st.markdown("---")
+            horizon = 3
+            st.info("🗓️ Horizon peramalan: **3 hari kerja** ke depan.")
 
     # Filter data historis berdasarkan input tanggal di sidebar
     if isinstance(date_range, (list, tuple)) and len(date_range) == 2:
@@ -611,47 +583,42 @@ def main():
         m_kurs = fc_results["models"]["kurs"]
         df_hist = fc_results["df_historical"]
 
-        # Kartu Ringkasan Diagnostik & Metrik Evaluasi Model
+        # Kartu Ringkasan Diagnostik & Metrik Evaluasi Model — tampilan kompak
         st.markdown("##### 🎯 Hasil Evaluasi Model (Data Testing 20% Out-of-Sample)")
-        d_col1, d_col2 = st.columns(2)
 
-        with d_col1:
+        def _fmt(val, prefix="", suffix="", decimals=2):
+            try:
+                return f"{prefix}{val:,.{decimals}f}{suffix}"
+            except Exception:
+                return "N/A"
+
+        ev_col1, ev_col2 = st.columns(2)
+        with ev_col1:
             st.markdown(
-                f"""
-                <div style="background-color: #fdfaf3; padding: 15px; border-radius: 8px; border: 1px solid #d4af37;">
-                    <h5 style="color: #b8860b; margin-top:0;">Model 1: Harga Emas (USD/oz)</h5>
-                    <ul style="margin-bottom:0; font-size:14px;">
-                        <li><b>Ordo Terbaik Terpilih</b>: <code>ARIMA{m_gold['order']}</code></li>
-                        <li><b>AIC (Training Set)</b>: {m_gold['train_aic']:.2f}</li>
-                        <li><b>Uji Stasionaritas ADF</b>: {m_gold['adf']['summary']} (Stat: {m_gold['adf']['adf_statistic']:.3f})</li>
-                        <li><b>MAE Data Test</b>: ${m_gold['mae']:,.2f}</li>
-                        <li><b>RMSE Data Test</b>: ${m_gold['rmse']:,.2f}</li>
-                        <li><b>MAPE Data Test</b>: <b>{m_gold['mape']:.2f}%</b></li>
-                    </ul>
-                </div>
-                """,
+                f"""<div style="background:#fdfaf3;padding:10px 14px;border-radius:8px;
+                border:1px solid #d4af37;font-size:13px;line-height:1.6;">
+                <b style="color:#b8860b;">Model 1 · Harga Emas (USD/oz)</b><br>
+                Ordo: <code>ARIMA{m_gold.get('order','?')}</code> &nbsp;|&nbsp;
+                AIC: {_fmt(m_gold.get('train_aic'), decimals=1)}<br>
+                MAE: {_fmt(m_gold.get('mae'), prefix='$')} &nbsp;|&nbsp;
+                RMSE: {_fmt(m_gold.get('rmse'), prefix='$')} &nbsp;|&nbsp;
+                MAPE: {_fmt(m_gold.get('mape'), suffix='%')}
+                </div>""",
                 unsafe_allow_html=True,
             )
-
-        with d_col2:
+        with ev_col2:
             st.markdown(
-                f"""
-                <div style="background-color: #f3fcf4; padding: 15px; border-radius: 8px; border: 1px solid #28a745;">
-                    <h5 style="color: #2e7d32; margin-top:0;">Model 2: Kurs USD/IDR</h5>
-                    <ul style="margin-bottom:0; font-size:14px;">
-                        <li><b>Ordo Terbaik Terpilih</b>: <code>ARIMA{m_kurs['order']}</code></li>
-                        <li><b>AIC (Training Set)</b>: {m_kurs['train_aic']:.2f}</li>
-                        <li><b>Uji Stasionaritas ADF</b>: {m_kurs['adf']['summary']} (Stat: {m_kurs['adf']['adf_statistic']:.3f})</li>
-                        <li><b>MAE Data Test</b>: Rp{m_kurs['mae']:,.2f}</li>
-                        <li><b>RMSE Data Test</b>: Rp{m_kurs['rmse']:,.2f}</li>
-                        <li><b>MAPE Data Test</b>: <b>{m_kurs['mape']:.2f}%</b></li>
-                    </ul>
-                </div>
-                """,
+                f"""<div style="background:#f3fcf4;padding:10px 14px;border-radius:8px;
+                border:1px solid #28a745;font-size:13px;line-height:1.6;">
+                <b style="color:#2e7d32;">Model 2 · Kurs USD/IDR</b><br>
+                Ordo: <code>ARIMA{m_kurs.get('order','?')}</code> &nbsp;|&nbsp;
+                AIC: {_fmt(m_kurs.get('train_aic'), decimals=1)}<br>
+                MAE: {_fmt(m_kurs.get('mae'), prefix='Rp')} &nbsp;|&nbsp;
+                RMSE: {_fmt(m_kurs.get('rmse'), prefix='Rp')} &nbsp;|&nbsp;
+                MAPE: {_fmt(m_kurs.get('mape'), suffix='%')}
+                </div>""",
                 unsafe_allow_html=True,
             )
-
-        st.markdown("<br>", unsafe_allow_html=True)
 
         # -------------------------------------------------------------------
         # Visualisasi Hasil Peramalan dengan Plotly
