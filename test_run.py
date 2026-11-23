@@ -2,8 +2,16 @@
 Script uji coba cepat tanpa harus menyalakan Airflow Webserver.
 Jalankan di WSL: python test_run.py
 """
+import sys
+from pathlib import Path
 import pandas as pd
-from dags.gold_price_etl import extract, transform, load
+
+# Import fungsi langsung dari modul etl_tasks
+try:
+    from dags.etl_tasks import extract, transform, load
+except ImportError:
+    sys.path.append(str(Path(__file__).resolve().parent / "dags"))
+    from etl_tasks import extract, transform, load
 
 class DummyTaskInstance:
     """Simulasi XCom milik Airflow untuk pengujian lokal"""
