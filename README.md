@@ -10,11 +10,36 @@ extract -> transform -> load
 
 ```
 etl-gold-airflow/
-├── dags/
-│   └── gold_price_etl.py   # definisi DAG
-├── data/                   # dibuat otomatis saat DAG jalan (tidak di-commit)
+├── dags
+│   ├── __pycache__
+│   ├── etl_tasks.py
+│   └── gold_price_etl.py
+├── data
+│   ├── gold_clean.csv
+│   ├── gold_final.csv
+│   ├── gold_raw.csv
+│   └── kurs_raw.csv
+├── docs
+│   └── desain-workflow.md
+├── logs
+│   ├── dag_id=gold_price_etl
+│   ├── dag_processor_manager
+│   └── scheduler
+├── venv
+├── __pycache__
+│
+├── README.md
+├── forecast.py
+├── dashboard-requirements.txt
+├── dashboard.py
 ├── requirements.txt
-└── README.md
+├── run_airflow.sh (bash untuk jalankan airflow)
+├── run_dashboard.sh (bash untuk jalankan dashboard)
+├── test_forecast.py
+├── test_run.py
+├── airflow.cfg
+├── airflow.db
+└── webserver_config.py
 ```
 
 ## Setup (sekali saja, di WSL)
