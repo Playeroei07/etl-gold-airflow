@@ -77,21 +77,10 @@ pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT}"
 pip install yfinance --constraint "${CONSTRAINT}"
 ```
 
-**4. Cek:**
+**4. Jalankan dan test Airflow awal (dan ketika ingin mau dijalankan kapan saja):**
 
 ```bash
-airflow version
-```
-
-Harus muncul `2.10.5`.
-
-## Menjalankan (setiap kali mau bekerja)
-
-```bash
-cd ~/etl-gold-airflow
-source venv/bin/activate
-export AIRFLOW_HOME=~/etl-gold-airflow
-airflow standalone
+bash run_airflow.sh
 ```
 
 Tunggu sekitar 1 menit, catat **username dan password** yang muncul di layar, lalu buka
@@ -102,23 +91,16 @@ Kalau tiga task berwarna hijau, hasilnya ada di folder `data/`.
 
 > Tiap anggota punya Airflow sendiri di komputernya. Yang dibagikan lewat GitHub hanya kode.
 
-## Cara kerja sama
 
-Sebelum mulai bekerja:
-
-```bash
-git pull
-```
-
-Setelah selesai mengedit:
+**5. Jalankan dashboard untuk memvisualisasikan data hasil ETL:**
 
 ```bash
-git add .
-git commit -m "pesan singkat tentang perubahan"
-git push
+bash run_dashboard.sh
 ```
 
-Aturan sederhana:
+## Untuk bekerja dan mengetest, sisa jalankan run_airflow.sh serta run_dashboard.sh kapan saja
+
+Aturan sederhana untuk _COMMIT_:
 - Jangan dua orang mengedit file yang sama di waktu yang sama.
 - Selalu `git pull` sebelum mulai.
 - Jangan commit `venv/`, `logs/`, `airflow.db`, atau `data/` (sudah diabaikan lewat `.gitignore`).
