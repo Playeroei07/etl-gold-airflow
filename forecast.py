@@ -278,8 +278,11 @@ def run_forecasting_pipeline(
     7. Perhitungan estimasi harga emas IDR/gram dari hasil prediksi kedua model:
        Prediksi IDR/gram = (Prediksi Close * Prediksi Kurs) / 31.1035
     """
-    if horizon not in (7, 14, 30):
-        raise ValueError("Horizon harus salah satu dari 7, 14, atau 30 periode.")
+    # Removed strict horizon validation to allow custom horizon values
+    # if horizon not in (7, 14, 30):
+    #     raise ValueError("Horizon harus salah satu dari 7, 14, atau 30 periode.")
+    if horizon <= 0:
+        raise ValueError("Horizon must be a positive integer.")
 
     # 1. Pemuatan data
     df = load_data(filepath)
