@@ -110,6 +110,30 @@ def main():
     # Sidebar: Kontrol & Informasi Sistem
     # -----------------------------------------------------------------------
     with st.sidebar:
+    st.title("⚙️ Kontrol & Filter")
+    st.caption("Proyek: Gold Price Monitoring (Airflow ETL)")
+    st.info(
+        f"📌 **Status Data**: Disimpan dari ETL\n\n"
+        f"📅 **Observasi Terakhir**:\n{latest_date_str}\n\n"
+        f"📦 **Total Baris Data**: {total_records} hari",
+        icon="ℹ️",
+    )
+    st.markdown("---")
+    # Collapse date range and horizon settings to save space
+    with st.expander("Filter Rentang Tanggal & Pengaturan Peramalan", expanded=False):
+        st.subheader("Filter Rentang Tanggal")
+        min_date = df_raw["date"].min().date()
+        max_date = df_raw["date"].max().date()
+        date_range = st.date_input(
+            "Pilih Rentang Analisis Historis:",
+            value=(min_date, max_date),
+            min_value=min_date,
+            max_value=max_date,
+        )
+        st.markdown("---")
+        st.subheader("Pengaturan Peramalan")
+        horizon = 3
+        st.info("Peramalan akan dilakukan untuk 3 hari kerja ke depan.")
         st.title("⚙️ Kontrol & Filter")
         st.caption("Proyek: Gold Price Monitoring (Airflow ETL)")
 
