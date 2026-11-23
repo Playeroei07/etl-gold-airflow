@@ -134,17 +134,9 @@ def main():
 
         st.markdown("---")
         st.subheader("Pengaturan Peramalan")
-        horizon_choice = st.selectbox(
-            "Horizon Peramalan (Hari Perdagangan):",
-            options=[7, 14, 30],
-            index=0,
-            help="Jumlah periode business day ke depan yang akan diproyeksikan oleh model ARIMA.",
-        )
-
-        st.caption(
-            "⚠️ **Catatan**: Tanggal peramalan menggunakan estimasi business day (hari kerja), "
-            "bukan kalender resmi libur bursa saham."
-        )
+        # Horizon is fixed to 3 business days as per requirement
+        horizon = 3
+        st.info("Peramalan akan dilakukan untuk 3 hari kerja ke depan.")
 
     # Filter data historis berdasarkan input tanggal di sidebar
     if isinstance(date_range, (list, tuple)) and len(date_range) == 2:
@@ -581,10 +573,10 @@ def main():
             """
         )
 
-        with st.spinner(f"Menjalankan peramalan ARIMA untuk horizon {horizon_choice} hari kerja..."):
+        with st.spinner(f"Menjalankan peramalan ARIMA untuk horizon {horizon} hari kerja..."):
             try:
                 fc_results = get_forecasting_results(
-                    str(DATA_PATH), horizon_choice, data_file_signature
+                    str(DATA_PATH), horizon, data_file_signature
                 )
             except Exception as e:
                 st.error(f"Gagal mengeksekusi model forecasting: {e}")
@@ -703,7 +695,7 @@ def main():
                 )
             )
             fig_fc.update_layout(
-                title=f"Proyeksi Harga Emas Dunia (USD/oz) - Horizon {horizon_choice} Hari Kerja",
+                title=f"Proyeksi Harga Emas Dunia (USD/oz) - Horizon {horizon} Hari Kerja",
                 xaxis_title="Tanggal",
                 yaxis_title="Harga (USD)",
                 template="plotly_white",
@@ -754,7 +746,7 @@ def main():
                 )
             )
             fig_fc.update_layout(
-                title=f"Proyeksi Kurs USD/IDR - Horizon {horizon_choice} Hari Kerja",
+                title=f"Proyeksi Kurs USD/IDR - Horizon {horizon} Hari Kerja",
                 xaxis_title="Tanggal",
                 yaxis_title="Nilai Tukar Rupiah (Rp)",
                 template="plotly_white",
@@ -805,7 +797,7 @@ def main():
                 )
             )
             fig_fc.update_layout(
-                title=f"Proyeksi Estimasi Harga Emas IDR/gram - Horizon {horizon_choice} Hari Kerja",
+                title=f"Proyeksi Estimasi Harga Emas IDR/gram - Horizon {horizon} Hari Kerja",
                 xaxis_title="Tanggal",
                 yaxis_title="Harga per Gram (Rp)",
                 template="plotly_white",
@@ -819,7 +811,7 @@ def main():
         # -------------------------------------------------------------------
         # Tabel Detail Nilai Peramalan Masa Depan
         # -------------------------------------------------------------------
-        st.markdown(f"##### 📋 Tabel Rincian Peramalan {horizon_choice} Hari Kerja ke Depan")
+        st.markdown(f"##### 📋 Tabel Rincian Peramalan {horizon} Hari Kerja ke Depan")
 
         # Tampilkan tabel yang diformat dengan rapi
         display_fc_table = fc_table.copy()
@@ -870,7 +862,7 @@ def main():
         st.download_button(
             label="📥 Unduh Hasil Peramalan (CSV)",
             data=csv_forecast,
-            file_name=f"gold_arima_forecast_h{horizon_choice}_{latest_date_str.replace(' ', '_')}.csv",
+            file_name=f"gold_arima_forecast_h{horizon}_{latest_date_str.replace(' ', '_')}.csv",
             mime="text/csv",
         )
 
