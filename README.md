@@ -14,18 +14,23 @@ etl-gold-airflow/
 │   ├── __pycache__
 │   ├── etl_tasks.py
 │   └── gold_price_etl.py
+│
 ├── data
 │   ├── gold_clean.csv
 │   ├── gold_final.csv
 │   ├── gold_raw.csv
 │   └── kurs_raw.csv
+│
 ├── docs
 │   └── desain-workflow.md
+│
 ├── logs
 │   ├── dag_id=gold_price_etl
 │   ├── dag_processor_manager
 │   └── scheduler
+│
 ├── venv
+│
 ├── __pycache__
 │
 ├── README.md
